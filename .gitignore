@@ -5,6 +5,4 @@
 /var/
 /vendor/
 ###< symfony/framework-bundle ###
-/.idea/
-/.idea/*
-.idea/*
+.idea
