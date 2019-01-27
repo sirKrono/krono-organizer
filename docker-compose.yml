@@ -15,6 +15,13 @@ volumes:
 ## Services
 ###############################################################################
 services:
+    nginxproxy:
+      image: jwilder/nginx-proxy
+      container_name: nginxproxy
+      ports:
+        - "80:80"
+      volumes:
+        - /var/run/docker.sock:/tmp/docker.sock:ro
     php:
        build:
            context: ./docker/php
@@ -66,12 +73,12 @@ services:
         links:
            - php
         environment:
-          VIRTUAL_HOST: api.notes.ru
+          VIRTUAL_HOST: api.krono-organizer.ru
 
     db:
         image: mysql:5.7
         volumes:
-            - technomagia:/var/lib/mysql
+            - krono-organizer:/var/lib/mysql
         ports:
           - "${EXTERNAL_MYSQL_PORT}:3306"
         command: --default-authentication-plugin=mysql_native_password
