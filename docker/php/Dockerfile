@@ -1,4 +1,4 @@
-FROM php:7.1-fpm
+FROM php:7.4-fpm
 
 ARG username
 ARG useruid
@@ -35,20 +35,15 @@ RUN apt-get install -y \
         libxml2-dev \
         libpq-dev \
         libaio1 \
-        memcached
-
-#RUN apt-get update && apt-get install -y libmemcached-dev zlib1g-dev \
-#    && pecl install memcached-2.2.0 \
-#    && docker-php-ext-enable memcached
-
-
-#RUN yes|CFLAGS="-fgnu89-inline" pecl install memcache-3.0.8 && docker-php-ext-enable memcache
-
-
+        memcached \
+        libzip-dev \
+        zip \
+        libonig-dev \
+        libpq-dev
 
 ### extensions install
-RUN docker-php-ext-install -j$(nproc) iconv curl json opcache readline intl bcmath zip xml mbstring soap \
-    && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+RUN docker-php-ext-install -j$(nproc) iconv curl json opcache readline intl bcmath zip xml mbstring soap zip \
+    && docker-php-ext-configure gd --with-jpeg=/usr/include/ --with-freetype=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd\
     && docker-php-ext-install mbstring\
      && docker-php-ext-enable mbstring\
@@ -57,8 +52,8 @@ RUN docker-php-ext-install -j$(nproc) iconv curl json opcache readline intl bcma
 #    && docker-php-ext-install memcached
 
 ### Pecl extensions install
-RUN pecl install redis-4.0.1 \
-    && pecl install xdebug-2.5.5 \
+RUN pecl install redis \
+    && pecl install xdebug \
     && docker-php-ext-enable redis xdebug \
     && mv /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini /usr/local/etc/php/conf.d/docker-php-ext-xdebug.disabled
 
@@ -74,10 +69,6 @@ RUN chown $username:$username /usr/local/bin/docker-php-entrypoint \
     && chmod 777 /usr/local/bin/docker-php-entrypoint \
     && chmod +x /usr/local/bin/docker-php-entrypoint
 
-### Debuggable php
-# RUN ["cp", "/usr/local/bin/php", "/usr/local/bin/php_orig"]
-# RUN ["rm", "-rf", "/usr/local/bin/php"]
-#    && rm -rf /usr/local/bin/php
 COPY debuggable-php.sh /usr/local/bin/debuggable-php
 RUN chown root:staff /usr/local/bin/debuggable-php \
     && chmod 777 /usr/local/bin/debuggable-php \
