@@ -6,3 +6,6 @@
 /vendor/
 ###< symfony/framework-bundle ###
 .idea
+
+###Исключения в папке docker
+/docker/nginx/logs/*
